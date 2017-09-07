@@ -21,11 +21,15 @@ Learn webpack, simple webpack configuration example
 
 >npm install --global webpack
 
-clone远程创库到本地：
+clone远程仓库到本地：
 >git clone https://github.com/San-Shui/webpack-demo.git
 
 进入webpack-demo目录
 >cd webpack-demo
 
+安装依赖
+> yarn install 或者 npm install 
+
 运行项目
->npm run start
+
+>yarn run start 或者 npm run start
