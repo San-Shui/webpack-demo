@@ -20,3 +20,12 @@ Learn webpack, simple webpack configuration example
 以下的 NPM 安装方式，将使 webpack 在全局环境下可用：
 
 >npm install --global webpack
+
+clone远程创库到本地：
+>git clone https://github.com/San-Shui/webpack-demo.git
+
+进入webpack-demo目录
+>cd webpack-demo
+
+运行项目
+>npm run start
