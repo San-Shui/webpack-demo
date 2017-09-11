@@ -144,7 +144,9 @@ module.exports = {
       sourceMap: 'inline-source-map',
       compress: {
         warnings: false,
-        drop_console: false,
+        // 移除掉代码中的 console
+        drop_console: true,
+        pure_funcs: ['console.log']
       }
     }),
     // Node 环境变量
@@ -162,6 +164,8 @@ module.exports = {
       jQuery: 'jquery'
     }),
     // 能以可视化的方式展示打包结果，为你提供分析需求
-    new BundleAnalyzerPlugin()
+    new BundleAnalyzerPlugin(),
+    // Scope Hoisting译作“作用域提升”。只需在配置文件中添加一个新的插件，就可以让 Webpack 打包出来的代码文件更小、运行的更快(实际上没有任何影响，体积大小没变)
+    new webpack.optimize.ModuleConcatenationPlugin()
   ]
 };
