@@ -1,7 +1,7 @@
 {
   "name": "my-app",
   "version": "1.0.0",
-  "description": "test",
+  "description": "a simple webpack demo",
   "author": "San-Shui <zoumiao@szzt.com.cn>",
   "main": "index.js",
   "scripts": {
