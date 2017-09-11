@@ -59,6 +59,14 @@ module.exports = {
     // publicPath: "../assets/", // 相对于 HTML 页面
     publicPath: "", // 相对于 HTML 页面（目录相同）
   },
+  externals: {
+    'lodash': {
+        commonjs: 'lodash',
+        commonjs2: 'lodash',
+        amd: 'lodash',
+        root: '_'
+    }
+  },
   devtool: 'inline-source-map', // inline-source-map - SourceMap 转换为 DataUrl 后添加到 bundle 中。
   // 如果你通过 Node.js API 来使用 dev-server， devServer 中的选项将被忽略。将选项作为第二个参数传入： new WebpackDevServer(compiler, {...})
   devServer: {

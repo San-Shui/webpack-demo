@@ -33,3 +33,50 @@ clone远程仓库到本地：
 运行项目
 
 >yarn run start 或者 npm run start
+
+webpack优化参考：
+ >[Webpack 打包优化之体积篇](http://jeffjade.com/2017/08/06/124-webpack-packge-optimization-for-volume/)
+
+ >[Webpack 打包优化之速度篇](http://jeffjade.com/2017/08/12/125-webpack-package-optimization-for-speed/)
+
+ &emsp;&emsp;在没有优化之前，如果执行npm run start，你会发现输出了一个非常巨大的文件。进一步观察该文件，你会发现 lodash 和你的代码被一起打包了。 然而对于你的 library 本身来说，并不需要打包 lodash。因此你可能会想将该外部扩展(external)的控制权交给你的用户。
+
+ ![Alt text](./src/img/analyse.png)
+
+这一点可以通过配置 externals 来实现：
+
+webpack.config.js配置
+```
+  externals: {
+      "lodash": {
+          commonjs: "lodash",
+          commonjs2: "lodash",
+          amd: "lodash",
+          root: "_"
+      }
+  }
+```
+index.html引入lodash
+
+```
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>My App</title>
+  <script type='text/javascript' src='https://unpkg.com/lodash@4.16.6'></script>
+</head>
+<body>
+</body>
+</html>
+```
+index.js使用lodash
+
+```
+document.write(_.capitalize('fred'))
+```
+运行npm run start 查看打包结果：
+
+![Alt text](./src/img/analysExternals.png)
+
+此时webpack不在打包lodash，而是外部引入。

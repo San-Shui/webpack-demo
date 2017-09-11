@@ -1,4 +1,4 @@
-import _ from 'lodash'
+// import _ from 'lodash'
 import { wordsToSentence } from './utils/utils'
 import './index.css'
 import './index.scss'
@@ -33,3 +33,5 @@ Object.values(Data.note).forEach((key) => {
 $(function(){    
   console.log('JQuery')  
 })
+document.writeln('<br>')
+document.write(_.capitalize('fred'))
