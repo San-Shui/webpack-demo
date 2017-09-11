@@ -1,6 +1,10 @@
 let path = require('path')
+// 生成一个HTML5文件
 let HtmlWebpackPlugin = require('html-webpack-plugin')
+// 清理文件夹
 const CleanWebpackPlugin = require('clean-webpack-plugin')
+// 将内容束展示为方便交互的直观树状图
+var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const webpack = require('webpack')
 module.exports = {
   /*每个 HTML 页面都有一个入口起点。单页应用(SPA)：一个入口起点，多页应用(MPA)：多个入口起点。
@@ -149,5 +153,7 @@ module.exports = {
       $: 'jquery',
       jQuery: 'jquery'
     }),
+    // 能以可视化的方式展示打包结果，为你提供分析需求
+    new BundleAnalyzerPlugin()
   ]
 };
