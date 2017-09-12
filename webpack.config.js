@@ -16,6 +16,7 @@ const webpack = require('webpack')
 function resolve (dir) {
   return path.join(__dirname, dir)
 }
+
 module.exports = {
   /*每个 HTML 页面都有一个入口起点。单页应用(SPA)：一个入口起点，多页应用(MPA)：多个入口起点。
     如果传入一个字符串或字符串数组，chunk 会被命名为 main。
@@ -29,7 +30,8 @@ module.exports = {
   /* 指示 webpack 如何去输出、以及在哪里输出你的「bundle、asset 和其他你所打包或使用 webpack 载入的任何内容」。
    */
   output: {
-    /*filename:此选项不会影响那些「按需加载 chunk」的输出文件。对于这些文件，请使用 output.chunkFilename 选项来控制输出。
+    /*filename:此选项不会影响那些「按需加载 chunk」的输出文件。对于这些文件，请使用 output.chunkFilename 
+    选项来控制输出。
       [hash]	模块标识符(module identifier)的 hash
       [chunkhash]	chunk 内容的 hash
       [name]	模块名称
@@ -48,7 +50,8 @@ module.exports = {
        "commonjs" - 当 library 加载完成，入口起点的返回值将分配给 exports 对象。
        "commonjs2" - 当 library 加载完成，入口起点的返回值将分配给 exports 对象
        "amd" - webpack 将你的 library 转为 AMD 模块
-       libraryTarget: "umd" - 这是一种可以将你的 library 能够在所有的模块定义下都可运行的方式（并且导出的完全不是模块）。
+       libraryTarget: "umd" - 这是一种可以将你的 library 能够在所有的模块定义下都可运行的方式
+                      （并且导出的完全不是模块）。
      */
     libraryTarget: "var",
     /* 目录对应一个绝对路径
@@ -101,69 +104,119 @@ module.exports = {
     // openPage: '/different/page' //指定打开浏览器时要导航的页面
     // overlay: true //当有编译器错误或警告时，在浏览器中显示全屏覆盖。默认禁用。如果您只想显示编译器错误：
   },
+
   /* 解析(Resolve):这些选项能设置模块如何被解析 
   */
   resolve: {
-    // 创建 import 或 require 的别名，来确保模块引入变得更简单。
+    /* 告诉 webpack 解析模块时应该搜索的目录。下面配置src目录优先于 node_modules搜索
+    */
+    modules: [
+      resolve('src'),
+      resolve('node_modules')
+    ],
+    /* 创建 import 或 require 的别名，来确保模块引入变得更简单。
+     */
     alias: {
         jquery: "jquery/src/jquery",
         Utilities: resolve('src/utilities/'),
         Templates: resolve('src/templates/'),
         xyz$: resolve('path/to/file.js'), // 在给定对象的键后的末尾添加 $，以表示精准匹配
     },
-    // 自动解析确定的扩展。默认值为：extensions: [".js", ".json"]
+    /* 自动解析确定的扩展。默认值为：extensions: [".js", ".json"] 
+    */
     extensions: ['.js', '.vue', '.json']
   },
+
+  /* module选项决定了如何处理项目中的不同类型的模块
+   */
   module: {
+    /* rules创建模块时，匹配请求的规则数组。这些规则能够修改模块的创建方式。
+     */
     rules: [
+      /* 加载 js
+       */
       {
         test: /\.js$/,
         loader: 'babel-loader',
-        include: resolve('src')
+        include: resolve('src'),
+        exclude: /node_modules/ // 不能满足的条件（排除不处理的目录）
       },
+      /* 加载 CSS
+       */
       {
         test: /\.css$/,
         loader: ['style-loader', 'css-loader'],
-        include: resolve('src')
+        include: resolve('src'),
+        exclude: /node_modules/ // 不能满足的条件（排除不处理的目录）
       },
+      /* 加载 sass 和 less
+       */
       {
         test: /\.scss$/,
         loader: ['style-loader', 'css-loader', 'sass-loader'],
-        include: resolve('src')
+        include: resolve('src'),
+        exclude: /node_modules/ // 不能满足的条件（排除不处理的目录）
       },
+      /* 加载 图片
+       */
       {
-        test: /\.(png|svg|jpg|gif)$/,
-        loader: ['file-loader'],
-        include: resolve('src')
+        test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
+        /* loader: ['file-loader'], // file-loader主要用来处理图片,其实也可以在js和html及其他文件上，但很少那么使用.
+         */
+        loader: 'url-loader', // url-loader 功能类似于 file-loader，但是在文件大小（单位 byte）低于指定的限制时，可以返回一个 DataURL。
+        options: {
+          limit: 10000 // 小于10K的图片转成base64编码的dataURL字符串写到代码中
+        },
+        include: resolve('src'),
+        exclude: /node_modules/ // 不能满足的条件（排除不处理的目录）
       },
+      /* 加载 字体
+       */
       {
-        test: /\.(woff|woff2|eot|ttf|otf)$/,
-        loader: ['file-loader'],
-        include: resolve('src')
+        test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
+        loader: 'url-loader',
+        options: {
+          limit: 10000
+        },
+        include: resolve('src'),
+        exclude: /node_modules/, // 不能满足的条件（排除不处理的目录）
       },
+      /* 加载 CSV、TSV
+       */
       {
         test: /\.(csv|tsv)$/,
-        loader: ['csv-loader'],
-        include: resolve('src')
+        loader: 'csv-loader',
+        include: resolve('src'),
+        exclude: /node_modules/ // 不能满足的条件（排除不处理的目录）
       },
+      /* 加载 xml
+       */
       {
         test: /\.xml$/,
-        loader: ['xml-loader'],
-        include: resolve('src')
+        loader: 'xml-loader',
+        include: resolve('src'),
+        exclude: /node_modules/ // 不能满足的条件（排除不处理的目录）
       }
     ]
   },
+
+  /* 插件列表
+   */
   plugins: [
-    // 清理 /dist 文件夹
+    /* 清理 /dist 文件夹 
+    */
     new CleanWebpackPlugin(['dist']),
-    // 设定 HtmlWebpackPlugin,然而 HtmlWebpackPlugin 还是会默认生成 index.html 文件
+    /* 设定 HtmlWebpackPlugin,然而 HtmlWebpackPlugin 还是会默认生成 index.html 文件 
+    */
     new HtmlWebpackPlugin({
       template: resolve('src/index.html')
       // title: 'Caching'
     }),
-    // 启用 HMR
+    /* 启用 HMR
+     */
     new webpack.HotModuleReplacementPlugin(),
-    // JS文件压缩
+    /* JS文件压缩 
+    */
     new webpack.optimize.UglifyJsPlugin({
       sourceMap: 'inline-source-map',
       compress: {
@@ -173,23 +226,30 @@ module.exports = {
         pure_funcs: ['console.log']
       }
     }),
-    // Node 环境变量
+    /* Node 环境变量
+     */
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('production')
     }),
-    // 防止重复：使用 CommonsChunkPlugin 去重和分离 chunk。
+    /* 防止重复：使用 CommonsChunkPlugin 去重和分离 chunk。
+     */
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor', // Specify the common bundle's name.
       filename: 'vendor-[hash].min.js',
     }),
-    // ProvidePlugin 可以将模块作为一个变量，被 webpack 在其他每个模块中引用。只有你需要使用此变量的时候，这个模块才会被 require 进来。
+    /* ProvidePlugin 可以将模块作为一个变量，被 webpack 在其他每个模块中引用。
+       只有你需要使用此变量的时候，这个模块才会被 require 进来。 
+    */
     new webpack.ProvidePlugin({
       $: 'jquery',
       jQuery: 'jquery'
     }),
-    // 能以可视化的方式展示打包结果，为你提供分析需求
+    /* 能以可视化的方式展示打包结果，为你提供分析需求 
+    */
     new BundleAnalyzerPlugin(),
-    // Scope Hoisting译作“作用域提升”。只需在配置文件中添加一个新的插件，就可以让 Webpack 打包出来的代码文件更小、运行的更快(实际上没有任何影响，体积大小没变)
+    /* Scope Hoisting译作“作用域提升”。只需在配置文件中添加一个新的插件，就可以让 Webpack 
+       打包出来的代码文件更小、运行的更快(实际上没有任何影响，体积大小没变)
+     */
     new webpack.optimize.ModuleConcatenationPlugin()
   ]
 };
