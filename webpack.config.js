@@ -139,8 +139,8 @@ module.exports = {
        */
       {
         test: /\.js$/,
-        loader: 'babel-loader',
-        include: resolve('src'),
+        loader: 'babel-loader?cacheDirectory=true',
+        include: [resolve('src'), resolve('test')],
         exclude: /node_modules/ // 不能满足的条件（排除不处理的目录）
       },
       /* 加载 CSS
