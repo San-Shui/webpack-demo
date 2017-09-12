@@ -29,6 +29,7 @@
     "webpack": "^3.5.5",
     "webpack-bundle-analyzer": "^2.9.0",
     "webpack-dev-server": "^2.7.1",
-    "xml-loader": "^1.2.1"
+    "xml-loader": "^1.2.1",
+    "fast-uglifyjs-plugin": "^0.3.0"
   }
 }

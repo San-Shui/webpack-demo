@@ -1,12 +1,14 @@
-let path = require('path')
+const path = require('path')
 // 生成一个HTML5文件
-let HtmlWebpackPlugin = require('html-webpack-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 // 清理文件夹
 const CleanWebpackPlugin = require('clean-webpack-plugin')
 // 将内容束展示为方便交互的直观树状图
-var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 // 引入webpack
 const webpack = require('webpack')
+// 高性能的webpack uglify plugin
+const FastUglifyJsPlugin = require('fast-uglifyjs-plugin')
 /* 处理路径
    path.join([path1][, path2][, ...]) 
       用于连接路径。该方法的主要用途在于，会正确使用当前系统的路径分隔符，Unix系统是/，Windows系统是\。
@@ -165,7 +167,7 @@ module.exports = {
          */
         loader: 'url-loader', // url-loader 功能类似于 file-loader，但是在文件大小（单位 byte）低于指定的限制时，可以返回一个 DataURL。
         options: {
-          limit: 10000 // 小于10K的图片转成base64编码的dataURL字符串写到代码中
+          limit: 10000 // 小于10K的图片转成base64编码的DataURL字符串写到代码中
         },
         include: resolve('src'),
         exclude: /node_modules/ // 不能满足的条件（排除不处理的目录）
@@ -250,6 +252,21 @@ module.exports = {
     /* Scope Hoisting译作“作用域提升”。只需在配置文件中添加一个新的插件，就可以让 Webpack 
        打包出来的代码文件更小、运行的更快(实际上没有任何影响，体积大小没变)
      */
-    new webpack.optimize.ModuleConcatenationPlugin()
+    new webpack.optimize.ModuleConcatenationPlugin(),
+    /*  增强代码代码压缩，高性能的webpack uglify plugin
+    */
+    new FastUglifyJsPlugin({
+      compress: {
+          warnings: false
+      },
+      // debug设为true可输出详细缓存使用信息:
+      debug: true,
+      // 默认开启缓存，提高uglify效率，关闭请使用:
+      cache: true,
+      // 默认缓存路径为项目根目录，手动配置请使用:
+      cacheFolder: resolve('.otherFolder'),
+      // 工作进程数，默认os.cpus().length
+      workerNum: 2
+    })
   ]
 };
